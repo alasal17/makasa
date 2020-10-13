@@ -1,4 +1,7 @@
-from SSBGetData.GetDataFromSSB import *
+import sys
+sys.path.append('SSBGetData/GetDataFromSSB.py')
+from SSBGetData.GetDataFromSSB import main_program
+
 
 def run_program():
 

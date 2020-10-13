@@ -17,5 +17,8 @@ WORKDIR /code
 # copy the content of the local src directory to the working directory
 COPY main.py main.py
 
+COPY ./SSBGetData/GetDataFromSSB.py .
 # command to run on container start
 CMD ["python", "main.py"]
+
+
