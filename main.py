@@ -1,16 +1,18 @@
-# This is a sample Python script.
+from SSBGetData.GetDataFromSSB import *
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def run_program():
+
+    var_done = ''
+
+    while var_done != 'done' :
+        user_choice = input('\nEnter your commend: ').lower()
+
+        if user_choice == 'Get data'.lower():
+            main_program()
+        elif user_choice == 'done'.lower():
+            print('Program has closed!')
+            break
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+run_program()
