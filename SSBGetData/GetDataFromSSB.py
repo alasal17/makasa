@@ -3,7 +3,6 @@ import pandas as pd
 from pyjstat import pyjstat
 
 
-
 def main_program():
   lovbrudd_08485()
   lovbrudd_09405()
