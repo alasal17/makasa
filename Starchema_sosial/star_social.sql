@@ -159,9 +159,7 @@ alter table star_sosial.innvandring_bydel
  alter table star_sosial.snittinntekt_per_bydel 
        rename column Bydel to bydel; 
       
- 
-      
-      
+     
       
 -- create and populate fact table
 create table fakta_sosial (id serial primary key, year_id int4 references time_year(year_id), place_id int4 references place_bydel(place_id),
@@ -188,5 +186,4 @@ aps.antall as "antall på sosialhjelp", apu.antall as "antall på uføretrygd", 
                  
                  
                  select * from star_sosial.fakta_sosial fs2 ;
-                 
-     
+ 
