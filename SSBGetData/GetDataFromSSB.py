@@ -27,6 +27,11 @@ def create_csv_of_data(url, payload, name_of_csv_file):
 
   df.to_csv(f'./SSBGetData/stagingarea/{name_of_csv_file}')
 
+
+
+
+
+
 def lovbrudd_08485():
   payload_08485 = {
     "query": [
@@ -159,6 +164,7 @@ def lovbrudd_09405():
   print("\u001b[35m", 'lovbrudd_09405')
 
 def lovbrudd_09406():
+
   payload_09406 = {
     "query": [
       {

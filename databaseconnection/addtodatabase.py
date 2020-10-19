@@ -30,6 +30,9 @@ def connect_to_database(table_name, data_df):
     #engine = create_engine(f'postgresql://user:pass@0.0.0.0:35432/db')
     data_df.to_sql(name=table_name, con=engine, if_exists='replace')
 
+
+
+
 def lovbrudd_08485():
     df = pd.read_csv(r'./SSBGetData/dataset/lovbrudd_08485.csv')
     connect_to_database('lovbrudd_08485', df)
