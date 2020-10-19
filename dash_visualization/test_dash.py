@@ -56,12 +56,12 @@ df = pd.read_csv('../SSBGetData/dataset/lovbrudd_09405.csv')
 df = df[df['value'] != 0.0]
 
 df.to_csv('../SSBGetData/dataset/lovbrudd_09405.csv', index=False)
-del df['Unnamed: 0']
+
+df_sub = df
+years = 2004
+df_sub = df_sub[df_sub['år'] == years]
+
+print(df_sub['value'].unique())
 #
 # df['år'] = pd.to_datetime('1996', format='%Y')
 
-
-set = 'Alle lovbruddstyper'
-år = 2006
-df2 = df[df['lovbruddstype'] == set]
-print(df2[df2['år'] == år].columns)

@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 import os
 import pandas as pd
 
-USER = os.environ['P_USER']
+USER = 'student_salam'
 PASS = os.environ['P_PASS']
 HOST = os.environ['P_HOST']
 DATABASE = 'gp_makasa'

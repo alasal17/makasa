@@ -9,34 +9,43 @@ import psycopg2
 import os
 
 
-USER_NAME = os.environ['P_USER']
+#USER_NAME = os.environ['P_USER']
 PASS = os.environ['P_PASS']
 HOST = os.environ['P_HOST']
 PORT = 5432
 
 # Connection
-try:
-        connection = psycopg2.connect(
-            user=USER_NAME,
-            password=PASS,
-            host=HOST,
-            port=PORT,
-            database='gp_makasa'
-        )
 
-        cursor = connection.cursor()
+try:
+            connection = psycopg2.connect(
+                user='student_salam',
+                password=PASS,
+                host=HOST,
+                port=PORT,
+                database='gp_makasa'
+            )
+
+            cursor = connection.cursor()
+
 
 except Exception as e:
     print(e)
 
 
+
 def data_from_fakta1():
 
-    cursor.execute('select l.lovbruddstype, å.år, f.value_lovbrudd from star_schema.fakta_1 f join star_schema.lovbruddstyper l using(lovbrudds_id) join star_schema.år å using(år_id);')
+    cursor.execute("""select sum(f.value_lovbrudd), l.lovbruddstype, å.år from star_schema.fakta_1 f
+join star_schema.lovbruddstyper l using(lovbrudds_id) 
+join star_schema.år å using(år_id)
+group by l.lovbruddstype, å.år
+order by å.år asc;""")
 
     # Get one data from database
     data_df = cursor.fetchall()
-    df_from_db = pd.DataFrame(data_df, columns=['lovbruddstype', 'år', 'value'])
+    df_from_db = pd.DataFrame(data_df, columns=['value', 'lovbruddstype', 'år'])
+
+
 
     # connection.commit()
     # cursor.close()
@@ -46,43 +55,38 @@ def data_from_fakta1():
 
 def data_from_fakta2():
     cursor.execute(
-        """select å.år, ag.alder, k.kjønn, s.statistikkvariabel, f.value from star_schema.fakta_2 f
+        """select sum(f.value), å.år, ag.alder, k.kjønn, s.statistikkvariabel from star_schema.fakta_2 f
             join star_schema.alder_grupper ag using(alder_id)
             join star_schema.kjønn k using(kjønn_id)
             join star_schema.år å using(år_id)
-            join star_schema.statistikkvariabel s using(statistikkvariabel_id);""")
+            join star_schema.statistikkvariabel s using(statistikkvariabel_id)
+            group by å.år,ag.alder, k.kjønn, s.statistikkvariabel
+            order by å.år asc;""")
 
     # Get one data from database
     data_df = cursor.fetchall()
-    df_from_db = pd.DataFrame(data_df, columns=['år', 'alder', 'kjønn','statistikkvariabel', 'value'])
-    print(df_from_db.columns)
+    df_from_db = pd.DataFrame(data_df, columns=['value', 'år', 'alder', 'kjønn','statistikkvariabel'])
     # connection.commit()
     # cursor.close()
     # connection.close()
 
     return df_from_db
 
+
+
+
 df1 = data_from_fakta1()
 df2 = data_from_fakta2()
-#df = pd.read_csv('../SSBGetData/dataset/lovbrudd_09405.csv')
-#df['år'] = pd.to_datetime('1996', format='%Y%m%d', errors='ignore')
 
 app = dash.Dash(__name__)
-
+app.config.suppress_callback_exceptions = True
 
 option_list = [{'label': b, 'value': b} for b in df1['lovbruddstype'].unique()]
-
 option_year_list = [{'label': b, 'value': b} for b in df1['år'].unique()]
-
 options_sex = [{'label': b, 'value': b} for b in df2['kjønn'].unique()]
 options_alder = [{'label': b, 'value': b} for b in df2['alder'].unique()]
 options_statistikkvariabel = [{'label': b, 'value': b} for b in df2['statistikkvariabel'].unique()]
 
-# header = html.Div(html.H1(children='lovbruddstype', className='header'))
-# graph = html.Div([dcc.Graph(id='dash_figure')])
-# checkbox = html.Div([dcc.Checklist(id='checkbox',options=option_list,value=['Alle lovbruddstyper'])])
-# content = [header, graph, checkbox]
-# app.layout = html.Div(content, className='ten columns offset-by-one')
 
 app.layout = html.Div(
     children=[
@@ -95,7 +99,7 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                          dcc.Dropdown(id='lovbruddstype', options=option_list,
-                                                      multi=True, value=df1['lovbruddstype'][100],
+                                                      multi=True, value=df1['lovbruddstype'][10],
                                                       style={'backgroundColor': '#1E1E1E'},
                                                       className='lovbruddstype'
                                                       ),
@@ -107,7 +111,7 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
 
-                                         dcc.Dropdown(id='sex', options=options_sex,
+                                         dcc.Dropdown(id='sexs', options=options_sex,
                                                       multi=True, value=df2['kjønn'][3],
                                                       style={'backgroundColor': '#1E1E1E'},
                                                       className='sex'
@@ -148,45 +152,44 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
 
-                                         dcc.Dropdown(id='year', options=option_year_list,
+                                         dcc.Dropdown(id='years', options=option_year_list,
                                                       multi=True, value=df2['år'][3],
                                                       style={'backgroundColor': '#1E1E1E'},
-                                                      className='year'
+                                                      className='years'
                                                       ),
 
                                      ], style={'color': '#1E1E1E'})
 
                                 ]
                              ),
-                    html.Div(className='eight columns div-for-charts bg-grey',
-                             children=[
-                                 dcc.Graph(id='timeseries', config={'displayModeBar': True}, animate=True)
-                             ]),
-                             html.Div(className='eight columns div-for-charts bg-grey',
-                             children=[
-                                 dcc.Graph(id='timeseries1', config={'displayModeBar': True}, animate=True)
-                             ]),
-                ])
-        ]
+                     html.Div(className='eight columns div-for-charts bg-grey',
+                              children=[
+                                  dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True)
+                              ]),
+                     html.Div(className='eight columns div-for-charts bg-grey',
+                              children=[
+                                  dcc.Graph(id='timeseries1', config={'displayModeBar': False}, animate=True)
+                              ])
+                 ],)
+
+    ]
 
 )
 
 
-
-# Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
               [Input('lovbruddstype', 'value'),
-               Input('year', 'value')])
+               Input('years', 'value')])
 def update_graph(lovbruddstyper, years):
     trace1 = []
     df_sub = df1
-    for lovbruddstype, year in zip(lovbruddstyper, years):
-        trace1.append(go.Line(x=df_sub[df_sub['år'] == year]['år'],
-                                 y=df_sub[df_sub['lovbruddstype'] == lovbruddstype]['value'].unique(),
-                                 mode='lines',
-                                 opacity=0.7,
-                                 name=lovbruddstype,
-                                 textposition='bottom center'))
+    for lovbrudd in lovbruddstyper:
+        trace1.append(go.Line(x=df_sub[df_sub['lovbruddstype'] == lovbrudd]['år'].sort_values(axis=0, ascending=True).unique(),
+                                     y= df_sub[df_sub['lovbruddstype'] == lovbrudd]['value'],
+                                     mode='x',
+                                     #opacity=0.9,
+                                     name='lovbruddstype',
+                                     textposition='bottom center'))
     traces = [trace1]
     data = [val for sublist in traces for val in sublist]
     figure = {'data': data,
@@ -198,8 +201,9 @@ def update_graph(lovbruddstyper, years):
                   margin={'b': 15},
                   hovermode='x',
                   autosize=True,
-                  title={'text': 'Lovbruddstype', 'font': {'color': 'white'}, 'x': 0.5},
-
+                  title={'text': 'Lovbrudd pr. år', 'font': {'color': 'white'}, 'x': 0.5},
+                  xaxis={'range': [df_sub.lovbruddstype.min(), df_sub.lovbruddstype.max()]},
+                  yaxis={'range': [df_sub.lovbruddstype.min(), df_sub.lovbruddstype.max()]}
               ),
 
               }
@@ -207,17 +211,19 @@ def update_graph(lovbruddstyper, years):
     return figure
 
 
-
 @app.callback(Output('timeseries1', 'figure'),
-              [Input('sex', 'value'),
-               Input('alder', 'value')])
-def lovbrudd_alder_kjønn(sex, alder):
+              [Input('sexs', 'value'),
+               Input('alder', 'value'),
+               Input('statistikkvariabel', 'value')])
+def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
     trace1 = []
     df_sub = df2
 
-    for sex, alder in zip(sex, alder):
-        trace1.append(go.Line(x=df_sub[df_sub['sex'] == sex]['år'],
-                              y=df_sub[df_sub['alder'] == alder]['value'],
+    for sex, statistikkvariabels, alde in zip(sexs, statistikkvariabel, alder):
+        df_sub = df_sub[df_sub['alder'] == alde]
+        df_sub = df_sub[df_sub['statistikkvariabel'] == statistikkvariabels]
+        trace1.append(go.Line(x=df_sub[df_sub['kjønn'] == sex]['år'].sort_values(axis=0, ascending=True).unique(),
+                              y=df_sub[df_sub['kjønn'] == sex]['value'],
                               mode='lines',
                               opacity=0.7,
                               name='kjønn',
@@ -233,25 +239,18 @@ def lovbrudd_alder_kjønn(sex, alder):
                   margin={'b': 15},
                   hovermode='x',
                   autosize=True,
-                  title={'text': 'Lovbruddstype', 'font': {'color': 'white'}, 'x': 0.5},
+                  title={'text': 'Statistikkvariabel basert på kjønn og alder', 'font': {'color': 'white'}, 'x': 0.5},
+                  xaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]},
+                  yaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]}
 
-              ),
-
-              }
-
+              ),}
     return figure
 
 
-# @app.callback(
-#     dash.dependencies.Output('checkbox', 'value'),
-#     dash.dependencies.Input('dash_figure', 'figure')
-#               )
-# def graph_update(lovbruddstype):
-#     sub_df = df[['år, lovbruddstype, value']]
-#     fig = px.line(data_frame=sub_df, x=sub_df['år'], y=sub_df['value'], color=df[df['lovbruddstype' == lovbruddstype]])
-#     fig = fig.show()
-#     return fig
-
+PORT = 5713
+ADDRESS = '127.0.0.1'
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(
+        port=PORT,
+        host=ADDRESS)
