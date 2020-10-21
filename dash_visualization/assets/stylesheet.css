@@ -261,6 +261,33 @@ a:hover {
   cursor: pointer;
   box-sizing: border-box;
 }
+
+.bottom_controller{
+width:20%;
+top: 70px;
+margin:10px;
+margin-bottom: 1000px;
+margin-top: 2rem;
+
+}
+
+.map_pos{
+width:10px;
+border: bold 4px grey;s
+}
+.bottom_graph{
+width: 100%;
+margin-bottom: 20px;
+margin-top:50px;
+margin-left: auto;
+margin-right: auto;
+float: left;
+box-sizing: border-box;
+
+
+}
+
+
 .button:hover, button:hover, input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hover, .button:focus, button:focus, input[type="submit"]:focus, input[type="reset"]:focus, input[type="button"]:focus {
   color: #333;
   border-color: #888;
