@@ -3,9 +3,8 @@ sys.path.append('SSBGetData/GetDataFromSSB.py')
 sys.path.append('databaseconnection/addtodatabase.py')
 sys.path.append('dash_visualization/VisualizationLovbrudd.py')
 from SSBGetData.GetDataFromSSB import main_program
-from databaseconnection.addtodatabase import add_to_database, lovbrudd_09405, lovbrudd_09406
+from databaseconnection.addtodatabase import add_to_database, lovbrudd_09405
 from dash_visualization import VisualizationLovbrudd
-import dash
 import logging
 
 logging.basicConfig(filename='logging_file.log', level=logging.ERROR,

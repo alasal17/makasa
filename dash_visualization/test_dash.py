@@ -60,8 +60,10 @@ df.to_csv('../SSBGetData/dataset/lovbrudd_09405.csv', index=False)
 df_sub = df
 years = 2004
 df_sub = df_sub[df_sub['år'] == years]
+import json
+from urllib.request import urlopen
+with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
+    counties = json.load(response)
 
-print(df_sub['value'].unique())
-#
-# df['år'] = pd.to_datetime('1996', format='%Y')
-
+oslo_df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/fips-unemp-16.csv")
+print(oslo_df)

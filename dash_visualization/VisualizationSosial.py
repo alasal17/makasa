@@ -7,7 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import psycopg2
 import os
-import pathlib
+
 
 #USER_NAME = os.environ['P_USER']
 PASS = os.environ['P_PASS']
@@ -84,11 +84,7 @@ options_sex = [{'label': b, 'value': b} for b in df2['kjønn'].unique()]
 options_alder = [{'label': b, 'value': b} for b in df2['alder'].unique()]
 options_statistikkvariabel = [{'label': b, 'value': b} for b in df2['statistikkvariabel'].unique()]
 
-oslo_df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/fips-unemp-16.csv")
-import json
-from urllib.request import urlopen
-with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
-    counties = json.load(response)
+
 app.layout = html.Div(
     children=[
         dcc.Link('Sosial', href='./VisualizationSosial'),
@@ -149,23 +145,19 @@ app.layout = html.Div(
                                                       ),
 
                                      ]),
-                                 html.Div(className='map_pos bottom_graph bg-grey ',
-                                          children=[
-                                              dcc.Graph(id='location', figure={})
-                                          ]),
-                                  #  html.H2('ÅR'),
-                                 # html.Div(
-                                 #
-                                 #     className='div-for-dropdown',
-                                 #     children=[
-                                 #
-                                 #         dcc.Dropdown(id='years', options=option_year_list,
-                                 #                      multi=True, value=df2['år'][3],
-                                 #                      style={'backgroundColor': '#1E1E1E'},
-                                 #                      className='years'
-                                 #                      ),
-                                 #
-                                 #     ], style={'color': '#1E1E1E'})
+                                    html.H2('ÅR'),
+                                 html.Div(
+
+                                     className='div-for-dropdown',
+                                     children=[
+
+                                         dcc.Dropdown(id='years', options=option_year_list,
+                                                      multi=True, value=df2['år'][3],
+                                                      style={'backgroundColor': '#1E1E1E'},
+                                                      className='years'
+                                                      ),
+
+                                     ], style={'color': '#1E1E1E'})
 
                                 ]
                              ),
@@ -176,38 +168,15 @@ app.layout = html.Div(
                      html.Div(className='eight columns div-for-charts bg-grey',
                               children=[
                                   dcc.Graph(id='timeseries1', config={'displayModeBar': False}, animate=True)
-                              ]),
-                     html.Div(className='bottom_graph  bg-grey',
-                              children=[
-                                  dcc.Graph(id='timeseries2', config={'displayModeBar': False}, animate=True)
-                              ]),html.H2('ÅR'),
-                     html.Div(className='bottom_controller',
-                              children=[
-
-                                         dcc.Dropdown(id='lovbruddstype2', options=option_list,
-                                                      multi=True, value=df1['år'][10],
-                                                      style={'backgroundColor': '#1E1E1E'},
-                                                      className='lovbruddstype2'
-                                                      ),]),
-
+                              ])
+                 ],)
 
     ]
 
-)])
+)
 
-@app.callback(Output('location', 'figure'),
-              [Input('lovbruddstype', 'value')])
-def update_graph(location):
-    figure = px.choropleth_mapbox(oslo_df, geojson=counties, locations='fips',
-                         mapbox_style="carto-positron",
-                         zoom=12,
-                         center={"lat": 59.912482, "lon": 10.766498},
-                         opacity=0.2,
-                         width=500,
-                         height=600
 
-                         )
-    return figure
+
 
 
 @app.callback(Output('timeseries', 'figure'),
@@ -243,62 +212,106 @@ def update_graph(lovbruddstyper):
 
     return figure
 
-@app.callback(Output('timeseries1', 'figure'),
-              [Input('sexs', 'value'),
-               Input('alder', 'value'),
-               Input('statistikkvariabel', 'value')])
-def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
-    trace1 = []
-    df_sub = df2.copy()
-
-    for sex in sexs:
-        for alde, statistikkvariabels in zip(alder, statistikkvariabel):
-            df_sub = df_sub[df_sub['alder'] == alde]
-            df_sub = df_sub[df_sub['statistikkvariabel'] == statistikkvariabels]
-            trace1.append(go.Line(x=df_sub[df_sub['kjønn'] == sex]['år'].sort_values(axis=0, ascending=True).unique(),
-                                      y=df_sub[df_sub['kjønn'] == sex]['value'],
-                                      #mode='lines',
-                                      opacity=1,
-                                      mode='lines+markers',
-                                      marker=dict(size=[20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
-                                                  color=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
-                                      name=sex,
-                                      textposition='bottom center'))
-    traces = [trace1]
-    data = [val for sublist in traces for val in sublist]
-    figure = {'data': data,
-              'layout': go.Layout(
-                  colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
-                  template='plotly_dark',
-                  # paper_bgcolor='rgba(0, 0, 0, 0)',
-                  # plot_bgcolor='rgba(0, 0, 0, 0)',
-                  margin={'b': 15},
-                  hovermode='x',
-                  autosize=True,
-                  title={'text': 'Statistikkvariabel basert på kjønn og alder', 'font': {'color': 'white'}, 'x': 0.5},
-                  xaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]},
-                  yaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]}
-
-              )}
-    return figure
 
 
-@app.callback(Output('timeseries2', 'figure'),
-               [Input('lovbruddstype2', 'value')])
-def update_graph(lovbruddstype2):
-    df_sub = df1.copy()
 
-    df_sub = df_sub[df_sub['lovbruddstype'] != 'Alle lovbruddstyper']
 
-    for lovbruddstype in lovbruddstype2:
-        df_sub = df_sub[df_sub['lovbruddstype'] == lovbruddstype]
 
-    figure = px.bar(data_frame=df_sub, x='år', y='value', text='value', color="lovbruddstype", hover_data=['lovbruddstype', 'value', 'år'],barmode='group')
-    figure.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
-                      marker_line_width=1.5, opacity=0.6, textposition='auto', texttemplate='%{text:.2s}')
-    figure.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
-    figure.update_xaxes(type='category')
-    return figure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @app.callback(Output('timeseries', 'figure'),
+#               [Input('lovbruddstype', 'value')],
+#                [State('years', 'value')])
+# def update_graph(lovbruddstyper, years):
+#     trace1 = []
+#     df_sub = df1.copy()
+#
+#     for year in years:
+#         df_sub = df_sub[df_sub['år'] == year]
+#
+#         for lovbrudd in lovbruddstyper:
+#             trace1.append(go.Line(x=df_sub[df_sub['lovbruddstype'] == lovbrudd]['år'].sort_values(axis=0, ascending=True).unique(),
+#                                                  y= df_sub[df_sub['lovbruddstype'] == lovbrudd]['value'],
+#                                                  mode='x',
+#                                                  opacity=0.9,
+#                                                  name='lovbruddstype',
+#                                                  textposition='bottom center'))
+#
+#
+#     traces = [trace1]
+#     data = [val for sublist in traces for val in sublist]
+#     figure = {'data': data,
+#               'layout': go.Layout(
+#                   colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
+#                   template='plotly_dark',
+#                   paper_bgcolor='rgba(0, 0, 0, 0)',
+#                   plot_bgcolor='rgba(0, 0, 0, 0)',
+#                   margin={'b': 15},
+#                   hovermode='x',
+#                   autosize=True,
+#                   title={'text': 'Lovbrudd pr. år', 'font': {'color': 'white'}, 'x': 0.5},
+#                   xaxis={'range': [df_sub.lovbruddstype.min(), df_sub.lovbruddstype.max()]},
+#                   yaxis={'range': [df_sub.lovbruddstype.min(), df_sub.lovbruddstype.max()]}
+#               ),
+#
+#               }
+#
+#     return figure
+#
+#
+# @app.callback(Output('timeseries1', 'figure'),
+#               [Input('sexs', 'value'),
+#                Input('alder', 'value'),
+#                Input('statistikkvariabel', 'value')])
+# def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
+#     trace1 = []
+#     df_sub = df2.copy()
+#
+#     for sex in sexs:
+#         for alde in alder:
+#             for statistikkvariabels in statistikkvariabel:
+#                 df_sub = df_sub[df_sub['alder'] == alde]
+#                 df_sub = df_sub[df_sub['statistikkvariabel'] == statistikkvariabels]
+#                 trace1.append(go.Line(x=df_sub[df_sub['kjønn'] == sex]['år'].sort_values(axis=0, ascending=True).unique(),
+#                                       y=df_sub[df_sub['kjønn'] == sex]['value'],
+#                                       mode='lines',
+#                                       opacity=1,
+#                                       name='kjønn',
+#                                       textposition='bottom center'))
+#     traces = [trace1]
+#     data = [val for sublist in traces for val in sublist]
+#     figure = {'data': data,
+#               'layout': go.Layout(
+#                   colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
+#                   template='plotly_dark',
+#                   paper_bgcolor='rgba(0, 0, 0, 0)',
+#                   plot_bgcolor='rgba(0, 0, 0, 0)',
+#                   margin={'b': 15},
+#                   hovermode='x',
+#                   autosize=True,
+#                   title={'text': 'Statistikkvariabel basert på kjønn og alder', 'font': {'color': 'white'}, 'x': 0.5},
+#                   xaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]},
+#                   yaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]}
+#
+#               )}
+#     return figure
 
 
 PORT = 5713
