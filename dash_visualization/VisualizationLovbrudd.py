@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objects as go
 import psycopg2
@@ -33,15 +33,14 @@ except Exception as e:
 
 def data_from_fakta1():
 
-    cursor.execute("""select sum(f.value_lovbrudd), l.lovbruddstype, å.år from star_schema.fakta_lovbrudd_1 f
-join star_schema.dim_lovbruddstyper l using(lovbrudds_id) 
-join star_schema.dim_år å using(år_id)
-group by l.lovbruddstype, å.år
-order by å.år asc;""")
+    cursor.execute("""select flo."Lovbrudd etterforsket" , å.år, dlo.lovbruddstype  from star_schema.fakta_lovbrudd_oslo flo 
+            join star_schema.dim_lovbruddstyper_oslo dlo using(lovbrudds_id)
+            join star_schema.dim_år å using(år_id)     
+            order by å.år asc;""")
 
     # Get one data from database
     data_df = cursor.fetchall()
-    df_from_db = pd.DataFrame(data_df, columns=['value', 'lovbruddstype', 'år'])
+    df_from_db = pd.DataFrame(data_df, columns=['value', 'år', 'lovbruddstype'])
 
 
 
@@ -89,70 +88,72 @@ import json
 from urllib.request import urlopen
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
-app.layout = html.Div(
-    children=[
-        dcc.Link('Sosial', href='./VisualizationSosial'),
-        html.Div(className='row',
-                 children=[
+    app.layout = html.Div(
+        children=[
+            dcc.Link('Sosial', href='./VisualizationSosial'),
+            html.Div(className='row',
+                     children=[
 
-                    html.Div(className='four columns div-user-controls',
-                             children=[
-                                 html.H2('Lovbrudd'),
-                                 html.Div(
-                                     className='div-for-dropdown',
-                                     children=[
-                                         dcc.Dropdown(id='lovbruddstype', options=option_list,
-                                                      multi=True, value=df1['lovbruddstype'][10],
-                                                      style={'backgroundColor': '#1E1E1E'},
-                                                      className='lovbruddstype'
-                                                      ),
-                                     ],
-                                     style={'color': '#1E1E1E'}),
-                                     html.H2('Kjønn'),
-                                 html.Div(
-
-                                     className='div-for-dropdown',
-                                     children=[
-
-                                         dcc.Dropdown(id='sexs', options=options_sex,
-                                                      multi=True, value=df2['kjønn'][3],
-                                                      style={'backgroundColor': '#1E1E1E'},
-                                                      className='sex'
-                                                      ),
-
-                                     ], style={'color': '#1E1E1E'}),
-
-                                 html.H2('Alder'),
-                                 html.Div(
-
-                                     className='div-for-dropdown',
-                                     children=[
-
-                                         dcc.Dropdown(id='alder', options=options_alder,
-                                                      multi=True, value=df2['alder'][3],
-                                                      style={'backgroundColor': '#1E1E1E'},
-                                                      className='alder'
-                                                      ),
-
-                                     ], style={'color': '#1E1E1E'}),
-
-                                 html.H2('Statistikkvariabel'),
-                                 html.Div(
-
-                                     className='div-for-dropdown',
-                                     children=[
-
-                                         dcc.Dropdown(id='statistikkvariabel', options=options_statistikkvariabel,
-                                                      multi=True, value=df2['statistikkvariabel'][3],
-                                                      style={'backgroundColor': '#1E1E1E'},
-                                                      className='statistikkvariabel'
-                                                      ),
-
-                                     ]),
-                                 html.Div(className='map_pos bottom_graph bg-grey ',
+                         html.Div(className='four columns div-user-controls',
+                                  children=[
+                                      html.H2('Lovbrudd'),
+                                      html.Div(
+                                          className='div-for-dropdown',
                                           children=[
-                                              dcc.Graph(id='location', figure={})
+                                              dcc.Dropdown(id='lovbruddstype', options=option_list,
+                                                           multi=True, value=df1['lovbruddstype'][10],
+                                                           style={'backgroundColor': '#1E1E1E'},
+                                                           className='lovbruddstype'
+                                                           ),
+                                          ],
+                                          style={'color': '#1E1E1E'}),
+                                      html.H2('Kjønn'),
+                                      html.Div(
+
+                                          className='div-for-dropdown',
+                                          children=[
+
+                                              dcc.Dropdown(id='sexs', options=options_sex,
+                                                           multi=True, value=df2['kjønn'][3],
+                                                           style={'backgroundColor': '#1E1E1E'},
+                                                           className='sex'
+                                                           ),
+
+                                          ], style={'color': '#1E1E1E'}),
+
+                                      html.H2('Alder'),
+                                      html.Div(
+
+                                          className='div-for-dropdown',
+                                          children=[
+
+                                              dcc.Dropdown(id='alder', options=options_alder,
+                                                           multi=False, value=df2['alder'][3],
+                                                           style={'backgroundColor': '#1E1E1E'},
+                                                           className='alder'
+                                                           ),
+
+                                          ], style={'color': '#1E1E1E'}),
+
+                                      html.H2('Statistikkvariabel'),
+                                      html.Div(
+
+                                          className='div-for-dropdown',
+                                          children=[
+
+                                              dcc.Dropdown(id='statistikkvariabel', options=options_statistikkvariabel,
+                                                           multi=False, value=df2['statistikkvariabel'][3],
+                                                           style={'backgroundColor': '#1E1E1E'},
+                                                           className='statistikkvariabel'
+                                                           ),
+
                                           ]),
+
+
+                                 # html.Div(className='map_pos bottom_graph bg-grey ',
+                                 #          children=[
+                                 #              dcc.Graph(id='location', figure={})
+                                 #          ]),
                                   #  html.H2('ÅR'),
                                  # html.Div(
                                  #
@@ -180,34 +181,35 @@ app.layout = html.Div(
                      html.Div(className='bottom_graph  bg-grey',
                               children=[
                                   dcc.Graph(id='timeseries2', config={'displayModeBar': False}, animate=True)
-                              ]),html.H2('ÅR'),
+                              ]),html.H2('Lovbrudd'),
                      html.Div(className='bottom_controller',
                               children=[
 
                                          dcc.Dropdown(id='lovbruddstype2', options=option_list,
-                                                      multi=True, value=df1['år'][10],
+                                                      multi=False, value=df1['lovbruddstype'][10],
                                                       style={'backgroundColor': '#1E1E1E'},
                                                       className='lovbruddstype2'
                                                       ),]),
+
+
 
 
     ]
 
 )])
 
-@app.callback(Output('location', 'figure'),
-              [Input('lovbruddstype', 'value')])
-def update_graph(location):
-    figure = px.choropleth_mapbox(oslo_df, geojson=counties, locations='fips',
-                         mapbox_style="carto-positron",
-                         zoom=12,
-                         center={"lat": 59.912482, "lon": 10.766498},
-                         opacity=0.2,
-                         width=500,
-                         height=600
-
-                         )
-    return figure
+# @app.callback(Output('location', 'figure'))
+# def update_graph(location):
+#     figure = px.choropleth_mapbox(oslo_df, geojson=counties, locations='fips',
+#                          mapbox_style="carto-positron",
+#                          zoom=12,
+#                          center={"lat": 59.912482, "lon": 10.766498},
+#                          opacity=0.2,
+#                          width=500,
+#                          height=600
+#
+#                          )
+#     return figure
 
 
 @app.callback(Output('timeseries', 'figure'),
@@ -251,11 +253,14 @@ def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
     trace1 = []
     df_sub = df2.copy()
 
+    print(len(df_sub))
+
+    df_sub = df_sub[df_sub['alder'] == alder]
+    df_sub = df_sub[df_sub['statistikkvariabel'] == statistikkvariabel]
+    print(df_sub)
+
     for sex in sexs:
-        for alde, statistikkvariabels in zip(alder, statistikkvariabel):
-            df_sub = df_sub[df_sub['alder'] == alde]
-            df_sub = df_sub[df_sub['statistikkvariabel'] == statistikkvariabels]
-            trace1.append(go.Line(x=df_sub[df_sub['kjønn'] == sex]['år'].sort_values(axis=0, ascending=True).unique(),
+        trace1.append(go.Line(x=df_sub[df_sub['kjønn'] == sex]['år'].sort_values(axis=0, ascending=True).unique(),
                                       y=df_sub[df_sub['kjønn'] == sex]['value'],
                                       #mode='lines',
                                       opacity=1,
@@ -275,9 +280,9 @@ def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
                   margin={'b': 15},
                   hovermode='x',
                   autosize=True,
-                  title={'text': 'Statistikkvariabel basert på kjønn og alder', 'font': {'color': 'white'}, 'x': 0.5},
-                  xaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]},
-                  yaxis={'range': [df_sub.kjønn.min(), df_sub.kjønn.max()]}
+                  title={'text': 'Statistikkvariabel basert på kjønn og alder', 'font': {'color': 'white', 'size':30}, 'x': 0.5},
+                  #xaxis={'range': [df_sub.år.min(), df_sub.år.max()]},
+                  yaxis={'range': [df_sub.value.min()*0.9, df_sub.value.max()*1.1]}
 
               )}
     return figure
@@ -288,12 +293,13 @@ def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
 def update_graph(lovbruddstype2):
     df_sub = df1.copy()
 
-    df_sub = df_sub[df_sub['lovbruddstype'] != 'Alle lovbruddstyper']
+    #df_sub = df_sub[df_sub['lovbruddstype'] != 'Alle lovbruddstyper']
+    df_sub = df_sub[df_sub['lovbruddstype'] == lovbruddstype2]
 
-    for lovbruddstype in lovbruddstype2:
-        df_sub = df_sub[df_sub['lovbruddstype'] == lovbruddstype]
+    # for lovbruddstype in lovbruddstype2:
+    #     df_sub = df_sub[df_sub['lovbruddstype'] == lovbruddstype]
 
-    figure = px.bar(data_frame=df_sub, x='år', y='value', text='value', color="lovbruddstype", hover_data=['lovbruddstype', 'value', 'år'],barmode='group')
+    figure = px.bar(data_frame=df_sub, x='år', y='value', text='value', color="lovbruddstype", hover_data=['lovbruddstype', 'value', 'år'],barmode='group', range_y=[df_sub.value.min(),df_sub.value.max()])
     figure.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                       marker_line_width=1.5, opacity=0.6, textposition='auto', texttemplate='%{text:.2s}')
     figure.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
