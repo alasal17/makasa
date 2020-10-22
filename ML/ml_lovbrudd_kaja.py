@@ -13,7 +13,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsRegressor
 
 
-
+#%%
+#Data prep (på det salam allerede har gjort)
 
 
 os.chdir(r'C:\Users\Kaja Amalie\Documents\Kaja\Graduation\data_preppet')
@@ -59,6 +60,7 @@ del X_train['value']
 
 X_test = df_test
 y_test = df_test['value']
+X_test_til_pred = X_test
 del X_test['value']
 
 
@@ -86,19 +88,6 @@ np.sqrt(mean_squared_error(y_train, y_pred_train)) #16097.445066695174 # 16300.8
 y_pred_test = lin_model.predict(X_test)
 mean_absolute_error(y_test, y_pred_test) #5010.878680866251 #3736.0891936734934
 np.sqrt(mean_squared_error(y_test, y_pred_test)) #17045.78794448737 #17186.60185297543
-
-
-
-
-#%%
-
-X_2019 = X
-
-
-
-
-
-
 
 
 #%%
@@ -132,12 +121,13 @@ def rmse_mae_and_r2(model,x,y, y_pred):
 
 df_pred = pd.DataFrame(data = y_pred_test, index = None, columns = ['value_pred'])
 df_pred['val_act'] = np.c_[y_test]
-df_pred['lovbrudd'] = np.c_[X_test['lovbruddstype']]
+df_pred['lovbrudd'] = np.c_[X_test_til_pred['lovbruddstype']]
 df_pred['år'] = np.c_[X_test['år']]
 
 df_pred.to_csv('pred_vs_actual.csv', index = False)
 
 #%%
+
 
 
 df_pred['value_act'] = pd.DataFrame(data = y_test, index = None, columns = ['value_act'])
