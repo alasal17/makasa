@@ -90,5 +90,11 @@ insert into star_schema.koordinater(latitude_coordinates, longitude_coordinates)
 
 select * from star_schema.dim_lokasjon;
 select * from star_schema.koordinater;
-select * f
 
+
+select * from sosialhjelp.antall_på_aap apa ;
+
+select flo."Lovbrudd etterforsket" , å.år, dlo.lovbruddstype  from star_schema.fakta_lovbrudd_oslo flo 
+            join star_schema.dim_lovbruddstyper_oslo dlo using(lovbrudds_id)
+            join star_schema.dim_år å using(år_id)     
+            order by å.år asc;

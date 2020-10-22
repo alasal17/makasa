@@ -19,7 +19,7 @@ PORT = 5432
 
 try:
             connection = psycopg2.connect(
-                user=P_USER,
+                user=USER_NAME,
                 password=PASS,
                 host='ds-etl-academy.cgbivchwjzle.eu-west-1.rds.amazonaws.com',
                 port=PORT,
@@ -27,6 +27,7 @@ try:
             )
 
             cursor = connection.cursor()
+            print('You are connected!')
 
 
 except Exception as e:
@@ -34,19 +35,40 @@ except Exception as e:
 
 
 #%%
-def data_from_innvandring():
-    cursor.execute("""select då.år, di.kategori, dl.landbakgrunn, sum(fi.antall_innvandrere)  from star_schema.fakta_innvandring fi 
-    join star_schema.dim_landbakgrunn dl using(id_landbakgrunn)
-    join star_schema.dim_innvandringskategori di using(id_innvandringskategori)
-    join star_schema.dim_år då using (år_id)
-    where dl.landbakgrunn != 'Innvandrere og norskfødte med innvandrerforeldre'
-    group by då.år, di.kategori, dl.landbakgrunn 
-    order by då.år ;""")
+def data_from_fakta1():
+
+    cursor.execute("""select sum(f.value_lovbrudd), l.lovbruddstype, å.år from star_schema.fakta_lovbrudd_1 f
+    join star_schema.dim_lovbruddstyper l using(lovbrudds_id) 
+    join star_schema.dim_år å using(år_id)
+    group by l.lovbruddstype, å.år
+    order by å.år asc;""")
+
+
     data_df = cursor.fetchall()
-    df_from_db = pd.DataFrame(data_df, columns=['år', 'kategori', 'landbakgrunn', 'antall'])
+    df_from_db = pd.DataFrame(data_df, columns=['value', 'lovbruddstype', 'år'])
+
     return df_from_db
 
-df = data_from_innvandring()
+def data_from_fakta2():
+    cursor.execute("""select sum(f.value), å.år, ag.alder, k.kjønn, s.statistikkvariabel from star_schema.fakta_lovbrudd_2 f
+    join star_schema.dim_alder_grupper ag using(alder_id)
+    join star_schema.dim_kjønn k using(kjønn_id)
+    join star_schema.dim_år å using(år_id)
+    join star_schema.dim_statistikkvariabel s using(statistikkvariabel_id)
+    group by å.år,ag.alder, k.kjønn, s.statistikkvariabel
+    order by å.år asc;""")
+
+    data_df = cursor.fetchall()
+    df_from_db = pd.DataFrame(data_df, columns=['value', 'år', 'alder', 'kjønn','statistikkvariabel'])
+
+
+    return df_from_db
+
+
+
+
+df1 = data_from_fakta1()
+df2 = data_from_fakta2()
 
 app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
