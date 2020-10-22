@@ -1,24 +1,4 @@
--- create and populate fact table
-create table fakta_sosial (id serial primary key, year_id int4 references time_year(year_id), place_id int4 references place_bydel(place_id),
-              kjønn_id int4 references kjønnsdim(kjønn_id), gjennomsnittsinntekt int, barnevernsmeldinger int, barnevernsundersøkelser int, 
-               innvandrere int, sosialhjelpsmottakere int, uførepensjonister int, "mottakere av arbeidsavklaringspenger" int);          
 
-insert into star_sosial.fakta_sosial (year_id, place_id, gjennomsnittsinntekt, barnevernsmeldinger, barnevernsundersøkelser, innvandrere, sosialhjelpsmottakere, uførepensjonister, "mottakere av arbeidsavklaringspenger")
-with tall as (select spb.år, spb.bydel, spb.gjennomsnittsinntekt, b."totalt antall" as barnevernsmeldinger, ub."totalt antall" as barnevernsundersøkelser, ib.sum as "antall innvandrere",
-aps.antall as "antall på sosialhjelp", apu.antall as "antall på uføretrygd", ab.antall as "antall på arbeidsavklaringspenger"
-      from star_sosial.snittinntekt_per_bydel spb 
-        left join barnevernssaker.barnevernsmeldinger b on spb.bydel = b.bydel and cast(spb.år as int) = cast(b.år as int) 
-        left join barnevernssaker.undersokelser_bydeler ub on spb.bydel = ub.bydel and cast(spb.år as int) = cast(ub.år as int)  
-        left join star_sosial.innvandring_bydel ib on spb.bydel = ib.bydel and cast(spb.år as int) = cast(ib.år as int)  
-        left join star_sosial.antall_på_sosialhjelp aps on spb.bydel = aps."?Bydel" and cast(spb.år as int) = cast(aps.år as int) 
-        left join star_sosial.antall_på_up apu on spb.bydel = apu."?Bydel" and cast(spb.år as int) = cast(apu.år as int) 
-        left join star_sosial.aap_bydel ab on spb.bydel = ab."?Bydel" and cast(spb.år as int) = cast(ab.år as int) 
-        order by år, bydel)
-                 select ty.year_id, pb.place_id, cast(t.gjennomsnittsinntekt as int), t.barnevernsmeldinger, t.barnevernsundersøkelser, t."antall innvandrere", t."antall på sosialhjelp", 
-                 cast(t."antall på uføretrygd" as int), cast(t."antall på arbeidsavklaringspenger" as int)
-                  from tall t 
-                  left join star_sosial.time_year ty on cast(t.år as int) = cast(ty."year" as int) 
-                  left join star_sosial.place_bydel pb on t.bydel = pb.bydel;
                  
                            
 --Inntekt:            
@@ -77,7 +57,8 @@ insert into fakta_innvandring(year_id, place_id, id_innvandringskategori, id_lan
                  join star_sosial.place_bydel pb on ipb.region = pb.bydel;
                 
                 select * from fakta_innvandring;
-             
+ 
+
 
 --Til etterpå:
 

@@ -72,5 +72,23 @@ insert into fakta_innvandring(year_id, bydel_id, id_innvandringskategori, id_lan
                  join star_schema.time_year ty on cast(ipb.år as int) = cast(ty."year" as int)
                  join star_schema.bydel pb on ipb.region = pb.bydel;
                 
-                select * from fakta_innvandring;
+ -- update place dim
  
+alter table star_schema.dim_lokasjon add column latitude_coordinates numeric; 
+alter table star_schema.dim_lokasjon add column longitude_coordinates numeric; 
+update star_schema.dim_lokasjon delete latitude_coordinates;
+
+
+create table if not exists star_schema.koordinater (sted_id serial primary key, latitude_coordinates numeric, longitude_coordinates numeric); 
+
+
+
+insert into star_schema.koordinater(latitude_coordinates, longitude_coordinates) values(0, 0), (59.948459, 10.660206), (59.961775, 10.922244), (59.934369, 10.817720), (59.912443, 10.741181), 
+(59.877047, 10.789108), (59.909831, 10.785645), 
+(59.957380, 10.765770), (59.923730, 10.775813), (59.833390, 10.824125), (0, 0),  
+(59.928221, 10.663502), (59.916032, 10.708108), (59.936679, 10.759309), (59.954578, 10.873632), (59.890105, 10.834287), (59.938204, 10.875476), (59.924732, 10.740207);
+
+select * from star_schema.dim_lokasjon;
+select * from star_schema.koordinater;
+select * f
+

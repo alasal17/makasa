@@ -97,6 +97,7 @@ alter table star_sosial.innvandring_bydel
  alter table barnevernssaker.barnevernsmeldinger  
        alter column år type int4
        using år::int4;
+      
   alter table barnevernssaker.barnevernsmeldinger  
        alter column "totalt antall" type numeric
        using "totalt antall"::numeric;
@@ -167,7 +168,7 @@ create table fakta_sosial (id serial primary key, year_id int4 references time_y
                innvandrere int, sosialhjelpsmottakere int, uførepensjonister int, "mottakere av arbeidsavklaringspenger" int);          
 
 insert into star_sosial.fakta_sosial (year_id, place_id, gjennomsnittsinntekt, barnevernsmeldinger, barnevernsundersøkelser, innvandrere, sosialhjelpsmottakere, uførepensjonister, "mottakere av arbeidsavklaringspenger")
-with tall as (select spb.år, spb.bydel, spb.gjennomsnittsinntekt, b."totalt antall" as barnevernsmeldinger, ub."totalt antall" as barnevernsundersøkelser, ib.sum as "antall innvandrere",
+with tall as (select spb.år, spb.bydel, cast(spb.gjennomsnittsinntekt as numeric), b."totalt antall" as barnevernsmeldinger, ub."totalt antall" as barnevernsundersøkelser, ib.sum as "antall innvandrere",
 aps.antall as "antall på sosialhjelp", apu.antall as "antall på uføretrygd", ab.antall as "antall på arbeidsavklaringspenger"
       from star_sosial.snittinntekt_per_bydel spb 
         left join barnevernssaker.barnevernsmeldinger b on spb.bydel = b.bydel and cast(spb.år as int) = cast(b.år as int) 
@@ -185,5 +186,17 @@ aps.antall as "antall på sosialhjelp", apu.antall as "antall på uføretrygd", 
                  
                  
                  
-                 select * from star_sosial.fakta_sosial fs2 ;
- 
+  
+
+                 
+select * from star_sosial.snittinntekt_per_bydel spb2 ;
+select spb.år, spb.bydel, cast(spb.gjennomsnittsinntekt as numeric), b."totalt antall" as barnevernsmeldinger, ub."totalt antall" as barnevernsundersøkelser, ib.sum as "antall innvandrere",
+aps.antall as "antall på sosialhjelp", apu.antall as "antall på uføretrygd", ab.antall as "antall på arbeidsavklaringspenger"
+      from star_sosial.snittinntekt_per_bydel spb 
+        left join barnevernssaker.barnevernsmeldinger b on spb.bydel = b.bydel and cast(spb.år as int) = cast(b.år as int) 
+        left join barnevernssaker.undersokelser_bydeler ub on spb.bydel = ub.bydel and cast(spb.år as int) = cast(ub.år as int)  
+        left join star_sosial.innvandring_bydel ib on spb.bydel = ib.bydel and cast(spb.år as int) = cast(ib.år as int)  
+        left join star_sosial.antall_på_sosialhjelp aps on spb.bydel = aps."﻿Bydel" and cast(spb.år as int) = cast(aps.år as int) 
+        left join star_sosial.antall_på_up apu on spb.bydel = apu."﻿Bydel" and cast(spb.år as int) = cast(apu.år as int) 
+        left join star_sosial.aap_bydel ab on spb.bydel = ab."﻿Bydel" and cast(spb.år as int) = cast(ab.år as int) 
+        order by år, bydel; 
