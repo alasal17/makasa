@@ -33,10 +33,16 @@ except Exception as e:
 
 def data_from_fakta1():
 
-    cursor.execute("""select flo."Lovbrudd etterforsket" , å.år, dlo.lovbruddstype  from star_schema.fakta_lovbrudd_oslo flo 
-            join star_schema.dim_lovbruddstyper_oslo dlo using(lovbrudds_id)
-            join star_schema.dim_år å using(år_id)     
-            order by å.år asc;""")
+    cursor.execute("""select sum(f.value_lovbrudd), å.år, l.lovbruddstype from star_schema.fakta_lovbrudd_1 f
+    join star_schema.dim_lovbruddstyper l using(lovbrudds_id) 
+    join star_schema.dim_år å using(år_id)
+    group by l.lovbruddstype, å.år
+    order by å.år asc;""")
+
+    # cursor.execute("""select flo."Lovbrudd etterforsket" , å.år, dlo.lovbruddstype  from star_schema.fakta_lovbrudd_oslo flo
+    #         join star_schema.dim_lovbruddstyper_oslo dlo using(lovbrudds_id)
+    #         join star_schema.dim_år å using(år_id)
+    #         order by å.år asc;""")
 
     # Get one data from database
     data_df = cursor.fetchall()
@@ -145,40 +151,24 @@ with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-c
                                                            multi=False, value=df2['statistikkvariabel'][3],
                                                            style={'backgroundColor': '#1E1E1E'},
                                                            className='statistikkvariabel'
-                                                           ),
+                                                           )
 
                                           ]),
 
 
-                                 # html.Div(className='map_pos bottom_graph bg-grey ',
-                                 #          children=[
-                                 #              dcc.Graph(id='location', figure={})
-                                 #          ]),
-                                  #  html.H2('ÅR'),
-                                 # html.Div(
-                                 #
-                                 #     className='div-for-dropdown',
-                                 #     children=[
-                                 #
-                                 #         dcc.Dropdown(id='years', options=option_year_list,
-                                 #                      multi=True, value=df2['år'][3],
-                                 #                      style={'backgroundColor': '#1E1E1E'},
-                                 #                      className='years'
-                                 #                      ),
-                                 #
-                                 #     ], style={'color': '#1E1E1E'})
+
 
                                 ]
                              ),
-                     html.Div(className='eight columns div-for-charts bg-grey',
+                     html.Div(className='eight columns  bg-grey shadow_layer space_from_bottom' ,
                               children=[
-                                  dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True)
+                                  dcc.Graph(id='timeseries', config={'displayModeBar': True}, animate=True)
                               ]),
-                     html.Div(className='eight columns div-for-charts bg-grey',
+                     html.Div(className=' columns bg-grey shadow_layer space_from_bottom',
                               children=[
-                                  dcc.Graph(id='timeseries1', config={'displayModeBar': False}, animate=True)
+                                  dcc.Graph(id='timeseries1', config={'displayModeBar': True}, animate=True)
                               ]),
-                     html.Div(className='bottom_graph  bg-grey',
+                     html.Div(className='bottom_graph  bg-grey shadow_layer',
                               children=[
                                   dcc.Graph(id='timeseries2', config={'displayModeBar': False}, animate=True)
                               ]),html.H2('Lovbrudd'),
@@ -198,18 +188,7 @@ with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-c
 
 )])
 
-# @app.callback(Output('location', 'figure'))
-# def update_graph(location):
-#     figure = px.choropleth_mapbox(oslo_df, geojson=counties, locations='fips',
-#                          mapbox_style="carto-positron",
-#                          zoom=12,
-#                          center={"lat": 59.912482, "lon": 10.766498},
-#                          opacity=0.2,
-#                          width=500,
-#                          height=600
-#
-#                          )
-#     return figure
+
 
 
 @app.callback(Output('timeseries', 'figure'),
@@ -253,11 +232,8 @@ def lovbrudd_alder_kjønn(sexs, alder, statistikkvariabel):
     trace1 = []
     df_sub = df2.copy()
 
-    print(len(df_sub))
-
     df_sub = df_sub[df_sub['alder'] == alder]
     df_sub = df_sub[df_sub['statistikkvariabel'] == statistikkvariabel]
-    print(df_sub)
 
     for sex in sexs:
         trace1.append(go.Line(x=df_sub[df_sub['kjønn'] == sex]['år'].sort_values(axis=0, ascending=True).unique(),
@@ -299,7 +275,7 @@ def update_graph(lovbruddstype2):
     # for lovbruddstype in lovbruddstype2:
     #     df_sub = df_sub[df_sub['lovbruddstype'] == lovbruddstype]
 
-    figure = px.bar(data_frame=df_sub, x='år', y='value', text='value', color="lovbruddstype", hover_data=['lovbruddstype', 'value', 'år'],barmode='group', range_y=[df_sub.value.min(),df_sub.value.max()])
+    figure = px.bar(data_frame=df_sub, x='år', y='value', text='value', color="lovbruddstype", hover_data=['lovbruddstype', 'value', 'år'],barmode='group',range_x=[df_sub.år.min(),df_sub.år.max()], range_y=[df_sub.value.min(),df_sub.value.max()])
     figure.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                       marker_line_width=1.5, opacity=0.6, textposition='auto', texttemplate='%{text:.2s}')
     figure.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
