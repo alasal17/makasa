@@ -59,7 +59,7 @@ Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
       width: 22%;
  }
   .four.columns {
-      width: 30.6666666667%;
+      width: 25.6666666667%;
  }
   .five.columns {
       width: 39.3333333333%;
@@ -262,13 +262,24 @@ a:hover {
   box-sizing: border-box;
 }
 
+.shadow_layer {
+  border: 1px solid;
+  padding: 10px;
+  box-shadow: 5px 10px 18px #100F0D;
+}
+
 .bottom_controller{
 width:20%;
-top: 70px;
-margin:10px;
-margin-bottom: 1000px;
-margin-top: 2rem;
 
+margin:10px;
+margin-bottom: 200px;
+
+}
+
+.space_from_bottom{
+margin-bottom: 50px;
+margin-top:50px;
+margin-left:10px;
 }
 
 .map_pos{
@@ -498,7 +509,8 @@ a {
 /* Graph Control Objects ––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .div-user-controls {
   padding-left: 55px;
-  padding-top: 64px;
+
+
 }
 .div-for-dropdown {
   padding-top: 12px;
@@ -621,6 +633,7 @@ a {
 
  .div-user-controls {
     padding: 32px;
+
  }
 
  .side-by-side{
