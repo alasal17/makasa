@@ -6,10 +6,8 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 
 from sklearn.linear_model import LinearRegression
-
 from sklearn.metrics import mean_absolute_error, mean_squared_error
-from sklearn.metrics import accuracy_score
-from sklearn.neighbors import KNeighborsRegressor
+
 
 
 #%%
@@ -133,8 +131,7 @@ df_pred.to_csv('pred_vs_actual.csv', index = False)
 
 ## Prøve å predikere 2019: 
     
-    
-os.chdir(r'C:\Users\Kaja Amalie\Documents\Kaja\Graduation\data_preppet')
+
 df = pd.read_csv('ml_lovbruddsfakta1.csv')
 df.fillna(0)
 
@@ -203,8 +200,6 @@ del df_2019['lag_2']
 del df_2019['lag_3']
 del df_2019['value']
 df_2019['pred_values'] = pred_2019
-
-
 
 df_2019.to_csv('pred_2019.csv', index = False)
 
