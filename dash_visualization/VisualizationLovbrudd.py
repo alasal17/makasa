@@ -171,7 +171,7 @@ with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-c
                      html.Div(className='bottom_graph  bg-grey shadow_layer',
                               children=[
                                   dcc.Graph(id='timeseries2', config={'displayModeBar': False}, animate=True)
-                              ]),html.H2('Lovbrudd'),
+                              ]),
                      html.Div(className='bottom_controller',
                               children=[
 

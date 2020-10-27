@@ -103,7 +103,7 @@ def rmse_mae_and_r2(model,x,y, y_pred):
     print("\n")
   
   
-  rmse_mae_and_r2(lin_model,X_test, y_test, y_pred_test)
+rmse_mae_and_r2(lin_model,X_test, y_test, y_pred_test)
   
 # RMSE is 17045.78794448737
 # MAE is 5010.878680866251
