@@ -11,16 +11,16 @@ import pathlib
 
 #USER_NAME = os.environ['P_USER']
 PASS = os.environ['P_PASS']
-HOST = os.environ['P_HOST']
+#HOST = os.environ[]
 PORT = 5432
 
 # Connection
 
 try:
             connection = psycopg2.connect(
-                user='student_salam',
+                user='student_kaja',
                 password=PASS,
-                host=HOST,
+                host='ds-etl-academy.cgbivchwjzle.eu-west-1.rds.amazonaws.com',
                 port=PORT,
                 database='gp_makasa'
             )

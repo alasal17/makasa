@@ -5,7 +5,6 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 
-
 from sklearn.linear_model import LinearRegression
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error
@@ -112,12 +111,15 @@ def rmse_mae_and_r2(model,x,y, y_pred):
 # MAE is 5010.878680866251
 # R2 score is 0.9645779925502898 
 
+#uten år: 
 #RMSE is 17186.60185297543
 #MAE is 3736.0891936734934
 #R2 score is 0.9639903384386 
-  
+df_2018 = df[df['år'] == 2018]
+df = df.sort_values(['lovbruddstype', 'år'])
+df['leg1'] = df['value'].shift(1)
 
-#%%
+#%% lage CSV med både orginal value og predikert value (for å kunne sammenligne de i PowerBI)
 
 df_pred = pd.DataFrame(data = y_pred_test, index = None, columns = ['value_pred'])
 df_pred['val_act'] = np.c_[y_test]
@@ -129,7 +131,82 @@ df_pred.to_csv('pred_vs_actual.csv', index = False)
 #%%
 
 
+## Prøve å predikere 2019: 
+    
+    
+os.chdir(r'C:\Users\Kaja Amalie\Documents\Kaja\Graduation\data_preppet')
+df = pd.read_csv('ml_lovbruddsfakta1.csv')
+df.fillna(0)
 
-df_pred['value_act'] = pd.DataFrame(data = y_test, index = None, columns = ['value_act'])
+
+dataprep = df['lovbruddstype']
+dataprep = dataprep.drop_duplicates()
+
+lis = []
+for i in dataprep:
+    lis.append(i)
+
+lovbrudd_encoder = OneHotEncoder()
+lovbrudd_encoder.fit(df[['lovbruddstype']])
+classes = lovbrudd_encoder.transform(df[['lovbruddstype']]).todense()
+classes_df = pd.DataFrame(data=classes, index = None, columns = lis)
+
+
+df[lis] = pd.DataFrame(data=classes, index = None, columns = lis)
+
+
+
+#Til å predikere (år 2018):
+df_2018 = df.where(df['år']== 2018)
+df_2018 = df_2018.dropna()
+
+df_2018 = df_2018.sort_values(['lovbruddstype', 'år'])
+df_2019 = df_2018
+
+df_2019['value i %'] = df_2018['value'].pct_change()
+df_2019['lag_1'] = df_2019['value i %'].shift(1)
+df_2019['lag_2'] = df_2019['lag_1'].shift(2)
+df_2019['lag_3'] = df_2019['lag_2'].shift(3)
+
+
+del df_2019['år']
+del df_2019['dato']
+del df_2019['% endring fra året før']
+del df_2019['value i %']
+del df_2019['value']
+del df_2019['lovbruddstype']
+df_2019 = df_2019.fillna(0)
+df_2019 = df_2019.reset_index(drop = True)
+
+
+df_2019[lis] = classes_df
+
+
+#%%
+
+#Make prediction 
+pred_2019 = lin_model.predict(df_2019)
+
+
+
+df = pd.read_csv('ml_lovbruddsfakta1.csv')
+df.fillna(0)
+df_2018 = df.where(df['år']== 2018)
+df_2018 = df_2018.dropna()
+
+df_2018 = df_2018.sort_values(['lovbruddstype', 'år'])
+df_2019 = df_2018
+
+df_2019['år'] = 2019
+del df_2019['lag_1']
+del df_2019['lag_2']
+del df_2019['lag_3']
+del df_2019['value']
+df_2019['pred_values'] = pred_2019
+
+
+
+df_2019.to_csv('pred_2019.csv', index = False)
+
 
 
