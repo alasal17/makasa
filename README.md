@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img width="460" height="300" src="dash_visualization/assets/team_logo.PNG">
+  <img width="560" height="400" src="dash_visualization/assets/team_logo.PNG">
 </p>
 
 Mappe struktur:
@@ -27,9 +27,14 @@ For nedlasting av data start programmet main.py.
 >>> python main.py
 
 ## starte programmet
-![](dash_visualization/assets/run_main_program.PNG)
+<p align="center">
+  <img width="560" height="400" src="dash_visualization/assets/run_main_program.PNG">
+</p>
+
 
 ## legge til data til databasen
-![](dash_visualization/assets/run_main_program1.PNG)
+<p align="center">
+  <img width="560" height="400" src="dash_visualization/assets/run_main_program1.PNG">
+</p>
 
 
