@@ -18,7 +18,7 @@ PORT = 5432
 
 try:
             connection = psycopg2.connect(
-                user='student_kaja',
+                user='student_salam',
                 password=PASS,
                 host='ds-etl-academy.cgbivchwjzle.eu-west-1.rds.amazonaws.com',
                 port=PORT,
