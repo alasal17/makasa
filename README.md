@@ -4,7 +4,7 @@
 </p>
 
 ## Mappe struktur:
-**DL** -> Deep learing kode
+**DL** -> Deep learing kode <br>
 **ML** -> Machine learing kode
 **PowerBI** -> visualiseringer 
 **Starschema_sosial** -> sql kode for star schema for sosiale veriabler 
