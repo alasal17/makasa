@@ -94,7 +94,16 @@ select * from star_schema.koordinater;
 
 select * from sosialhjelp.antall_på_aap apa ;
 
-select flo."Lovbrudd etterforsket" , å.år, dlo.lovbruddstype  from star_schema.fakta_lovbrudd_oslo flo 
+create view public.lovbrudd_oslo as; select å.år, dlo.lovbruddstype, flo."Lovbrudd etterforsket"  from star_schema.fakta_lovbrudd_oslo flo 
             join star_schema.dim_lovbruddstyper_oslo dlo using(lovbrudds_id)
             join star_schema.dim_år å using(år_id)     
-            order by å.år asc;
+            order by flo."Lovbrudd etterforsket" desc;
+            ¨
+            
+ select då.år, dag.alder, ds.statistikkvariabel, fl.value from fakta_lovbrudd_2 fl 
+       join dim_alder_grupper dag on fl.alder_id = fl.alder_id 
+       join dim_år då on fl.år_id = då.år_id 
+       join dim_statistikkvariabel ds on fl.statistikkvariabel_id = ds.statistikkvariabel_id ;
+       
+      
+      select * from dim_alder_grupper dag ;
