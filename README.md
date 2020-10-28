@@ -3,6 +3,9 @@
   <img width="560" height="400" src="dash_visualization/assets/team_logo.PNG">
 </p>
 
+***Skrevet av Kaja, Martin og Salam
+dato: 23.10.2020***
+
 ## Mappe struktur:
 
 **DL** -> Deep learing kode <br>
@@ -28,6 +31,8 @@
 **main.py** -> programmet som gir deg mulighet til å laste ned dataen i CSV og legge til dataen til databasen.
 
 **requirements.txt** -> er beskrivelse av alle pakkene og dens versjon vi har brukt i prosjektet. 
+
+**presentasjon** -> er avsluttingspresentasjon vi hadde på fredag 23.10.2020
 
 
 # Bruke programmet
