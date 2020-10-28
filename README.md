@@ -1,4 +1,4 @@
-# makasa
+![](makasa/dash_visualization/assets/team_logo.PNG)
 
 
 Mappe struktur:
@@ -24,4 +24,8 @@ requirements.txt -> er beskrivelse av alle pakkene og dens versjon vi har brukt 
 For nedlasting av data start programmet main.py. 
 >>> python main.py
 
+## starte programmet
 ![](makasa/dash_visualization/assets/run_main_program.PNG)
+
+
+
