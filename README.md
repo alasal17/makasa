@@ -1,6 +1,10 @@
 ![](dash_visualization/assets/team_logo.PNG)
 
 
+<p align="center">
+  <img width="460" height="300" src="dash_visualization/assets/team_logo.PNG">
+</p>
+
 Mappe struktur:
 DL -> Deep learing kode
 ML -> Machine learing kode
