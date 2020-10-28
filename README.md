@@ -24,4 +24,4 @@ requirements.txt -> er beskrivelse av alle pakkene og dens versjon vi har brukt 
 For nedlasting av data start programmet main.py. 
 >>> python main.py
 
-![alt tag](makasa/dash_visualization/assets/run main program.PNG)
+![](makasa/dash_visualization/assets/run main program.PNG)
