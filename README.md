@@ -17,7 +17,7 @@
 
 **database** -> volum for postgres i docker
 
-**databaseconnection** -> er vår å koble til og sende data fra api til databasen (gp_makasa)
+**databaseconnection** -> kobler til og sende data fra api til databasen (gp_makasa)
 
 **sql** -> sql koden for ETL delen
 
