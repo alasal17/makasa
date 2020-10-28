@@ -1,4 +1,4 @@
-![](makasa/dash_visualization/assets/team_logo.PNG)
+![](dash_visualization/assets/team_logo.PNG)
 
 
 Mappe struktur:
@@ -25,7 +25,9 @@ For nedlasting av data start programmet main.py.
 >>> python main.py
 
 ## starte programmet
-![](makasa/dash_visualization/assets/run_main_program.PNG)
+![](dash_visualization/assets/run_main_program.PNG)
 
+## legge til data til databasen
+![](dash_visualization/assets/run_main_program1.PNG)
 
 
