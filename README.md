@@ -64,7 +64,7 @@ For å se på dataen i dash må du navigere til ***dash_visualization/Visualizat
 >>> python VisualizationLovbrudd.py
 
 <p align="center">
-  <img width="560" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG">
+  <img width="1000" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG">
 </p>
 
 <p align="center">
