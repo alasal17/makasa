@@ -36,22 +36,43 @@ dato: 23.10.2020***
 
 
 # Bruke programmet
+For å bruke programmet må du installere requirements filen.
 
-- install requirements.txt
 >>> pip install -r requirements.txt
+
+## Starte med å hent dataen
 
 For nedlasting av data start programmet main.py. 
 >>> python main.py
-
-## starte programmet
+Her får du alternativer får å hente dataen. Den første er å laste ned dataen fra SSB i CSV-filer. Det andre er å sende dataen til databasen. 
+ 
 <p align="center">
   <img width="560" height="400" src="dash_visualization/assets/run_main_program.PNG">
 </p>
 
-
-## legge til data til databasen
+### legge til data til databasen
+For å legge inn dataen til databasen må du skrive inn i CMD "add to database
+Her for du mulighet å velge en eller flere tabeller som du kan sende til databasen.
 <p align="center">
   <img width="560" height="400" src="dash_visualization/assets/run_main_program1.PNG">
+</p>
+
+
+## Visualisering med dash
+
+For å se på dataen i dash må du navigere til ***dash_visualization/VisualizationLovbrudd.py*** .
+>>> python VisualizationLovbrudd.py
+
+<p align="center">
+  <img width="560" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG">
+</p>
+
+<p align="center">
+  <img width="560" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG1">
+</p>
+
+<p align="center">
+  <img width="560" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG2">
 </p>
 
 
