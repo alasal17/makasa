@@ -68,11 +68,11 @@ For å se på dataen i dash må du navigere til ***dash_visualization/Visualizat
 </p>
 
 <p align="center">
-  <img width="560" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG1">
+  <img width="1000" height="400" src="dash_visualization/assets/dash_lovbrudd1.PNG">
 </p>
 
 <p align="center">
-  <img width="560" height="400" src="dash_visualization/assets/dash_lovbrudd.PNG2">
+  <img width="1000" height="400" src="dash_visualization/assets/dash_lovbrudd2.PNG">
 </p>
 
 
